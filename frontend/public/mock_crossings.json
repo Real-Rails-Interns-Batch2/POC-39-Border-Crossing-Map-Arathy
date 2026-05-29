@@ -1,0 +1,104 @@
+{
+  "crossings": [
+    {
+      "id": 1,
+      "name": "Detroit-Windsor",
+      "country": "USA-Canada",
+      "wait_time": 42,
+      "wait_vs_avg": -5.2,
+      "throughput": 1200,
+      "throughput_tier": "High-Volume",
+      "commodity": "Automobiles",
+      "lat": 42.3149,
+      "lng": -83.0364,
+      "status": "Active",
+      "risk_level": "Low",
+      "type": "Land",
+      "delay_label": "Normal"
+    },
+    {
+      "id": 2,
+      "name": "San Ysidro",
+      "country": "USA-Mexico",
+      "wait_time": 78,
+      "wait_vs_avg": 12.4,
+      "throughput": 3400,
+      "throughput_tier": "High-Volume",
+      "commodity": "Consumer Goods",
+      "lat": 32.5439,
+      "lng": -117.0297,
+      "status": "Active",
+      "risk_level": "Medium",
+      "type": "Land",
+      "delay_label": "Moderate"
+    },
+    {
+      "id": 3,
+      "name": "Wagah Border",
+      "country": "India-Pakistan",
+      "wait_time": 85,
+      "wait_vs_avg": 7.2,
+      "throughput": 1200,
+      "throughput_tier": "Mid-Volume",
+      "commodity": "Textiles",
+      "lat": 31.604,
+      "lng": 74.5726,
+      "status": "Restricted",
+      "risk_level": "High",
+      "type": "Land",
+      "delay_label": "High"
+    },
+    {
+      "id": 4,
+      "name": "Calais-Dover",
+      "country": "France-UK",
+      "wait_time": 15,
+      "wait_vs_avg": -25.0,
+      "throughput": 10000,
+      "throughput_tier": "High-Volume",
+      "commodity": "Mixed Goods",
+      "lat": 50.9513,
+      "lng": 1.8587,
+      "status": "Active",
+      "risk_level": "Low",
+      "type": "Sea",
+      "delay_label": "Normal"
+    },
+    {
+      "id": 5,
+      "name": "Singapore-Woodlands",
+      "country": "Singapore-Malaysia",
+      "wait_time": 20,
+      "wait_vs_avg": -15.0,
+      "throughput": 50000,
+      "throughput_tier": "High-Volume",
+      "commodity": "Electronics",
+      "lat": 1.4433,
+      "lng": 103.7767,
+      "status": "Active",
+      "risk_level": "Low",
+      "type": "Land",
+      "delay_label": "Normal"
+    }
+  ],
+  "stats": {
+    "total": 5,
+    "active": 4,
+    "restricted": 1,
+    "avg_wait_time": 48.0,
+    "high_risk": 1,
+    "total_throughput": 65800,
+    "commodities": {
+      "Automobiles": 1,
+      "Consumer Goods": 1,
+      "Textiles": 1,
+      "Mixed Goods": 1,
+      "Electronics": 1
+    },
+    "risk_breakdown": {
+      "Low": 3,
+      "Medium": 1,
+      "High": 1
+    }
+  }
+}
