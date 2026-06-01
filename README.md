@@ -82,7 +82,15 @@ npm run dev
 Frontend runs on: http://localhost:3000
 
 🔌 API Endpoints
-EndpointMethodDescription/api/crossingsGETAll border crossings with filters/api/statsGETAggregate statistics/api/delaysGETTop 10 highest delay crossings/api/compareGETCompare specific crossings by ID/api/analyticsGETPandas-powered analytics/api/healthGETAPI health check
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/crossings` | GET | All border crossings with filters |
+| `/api/stats` | GET | Aggregate statistics |
+| `/api/delays` | GET | Top 10 highest delay crossings |
+| `/api/compare` | GET | Compare specific crossings by ID |
+| `/api/analytics` | GET | Pandas-powered analytics |
+| `/api/health` | GET | API health check |
 
 📊 Data Sources
 SourceStatusDescriptionOpenStreetMap OverpassLiveBorder crossing locationsUN ComtradeSyntheticGlobal commodity trade dataUS Census BureauSyntheticUS border crossing statisticsWait Time EventsSyntheticCrossing wait time eventsThroughput DataSyntheticDaily volume throughput
