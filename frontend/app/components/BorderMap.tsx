@@ -15,6 +15,7 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
   const mapRef      = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const markers     = useRef<any[]>([]);
+  const lines       = useRef<any[]>([]);   // ← NEW: store lines here
   const initialized = useRef(false);
 
   // Init map once
@@ -43,7 +44,7 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
     })();
   }, []);
 
-  // Render markers whenever crossings or selected changes
+  // Render markers + connecting lines whenever crossings or selected changes
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -57,6 +58,51 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
       markers.current.forEach((m) => m.remove());
       markers.current = [];
 
+      // ↓ NEW: Remove old lines before drawing new ones
+      lines.current.forEach((l) => l.remove());
+      lines.current = [];
+
+      // ↓ NEW: Draw connecting lines between all crossings that have lat/lon
+      // We connect each crossing to its nearest neighbours by type
+      const validCrossings = crossings.filter((c) => c.lat && c.lon);
+
+      // Group crossings by type and connect them in sequence
+      const typeGroups: Record<string, Crossing[]> = {};
+      validCrossings.forEach((c) => {
+        if (!typeGroups[c.type]) typeGroups[c.type] = [];
+        typeGroups[c.type].push(c);
+      });
+
+      Object.entries(typeGroups).forEach(([type, group]) => {
+        // Connect each point to the next point of the same type
+        for (let i = 0; i < group.length - 1; i++) {
+          const from = group[i];
+          const to   = group[i + 1];
+
+          const color =
+            type === "Rail" ? "#A78BFA" :
+            type === "Sea"  ? "#60A5FA" :
+            "#4ADE80"; // Land default
+
+          const line = L.polyline(
+            [[from.lat!, from.lon!], [to.lat!, to.lon!]],
+            {
+              color,
+              weight: 1.5,
+              opacity: 0.45,
+              // Rail = dashed line, Sea = solid, Land = dotted
+              dashArray:
+                type === "Rail" ? "8, 5" :
+                type === "Land" ? "2, 6" :
+                undefined,
+            }
+          ).addTo(mapInstance.current);
+
+          lines.current.push(line);
+        }
+      });
+
+      // Draw markers on top of lines
       crossings.forEach((c) => {
         if (!c.lat || !c.lon) return;
 
@@ -99,7 +145,10 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
           </div>
         `, { maxWidth: 260 });
 
-        marker.on("click", () => onSelect(c));
+        marker.on("mouseover", () => marker.openPopup());
+        marker.on("mouseout",  () => marker.closePopup());
+        marker.on("click",     () => onSelect(c));
+
         marker.addTo(mapInstance.current);
         markers.current.push(marker);
       });
