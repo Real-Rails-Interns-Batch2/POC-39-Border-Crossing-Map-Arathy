@@ -1,0 +1,14 @@
+{
+  "border_stats": [
+    { "crossing": "San Ysidro", "state": "California", "trucks_per_day": 4200, "cars_per_day": 71000, "year": 2023 },
+    { "crossing": "Detroit-Windsor", "state": "Michigan", "trucks_per_day": 8500, "cars_per_day": 12000, "year": 2023 },
+    { "crossing": "Peace Arch", "state": "Washington", "trucks_per_day": 1200, "cars_per_day": 24000, "year": 2023 }
+  ],
+  "county_data": [
+    { "name": "San Diego County", "state": "California", "population": "3,298,634", "income": "$78,980" },
+    { "name": "El Paso County", "state": "Texas", "population": "865,657", "income": "$44,431" },
+    { "name": "Wayne County", "state": "Michigan", "population": "1,759,335", "income": "$51,285" },
+    { "name": "Whatcom County", "state": "Washington", "population": "229,247", "income": "$68,750" }
+  ],
+  "meta": { "synthetic": true, "source": "US Census Bureau Format" }
+}

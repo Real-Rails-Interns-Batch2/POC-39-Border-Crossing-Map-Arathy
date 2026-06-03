@@ -1,0 +1,13 @@
+{
+  "trade_flows": [
+    { "reporter": "USA", "partner": "Canada", "commodity": "Automobiles", "trade_value_usd": 48000000000, "year": 2023, "flow": "Export" },
+    { "reporter": "USA", "partner": "Mexico", "commodity": "Consumer Goods", "trade_value_usd": 32000000000, "year": 2023, "flow": "Import" },
+    { "reporter": "France", "partner": "United Kingdom", "commodity": "Mixed Goods", "trade_value_usd": 28000000000, "year": 2023, "flow": "Export" },
+    { "reporter": "India", "partner": "Bangladesh", "commodity": "Agricultural", "trade_value_usd": 12000000000, "year": 2023, "flow": "Export" },
+    { "reporter": "Singapore", "partner": "Malaysia", "commodity": "Electronics", "trade_value_usd": 65000000000, "year": 2023, "flow": "Export" },
+    { "reporter": "Hong Kong", "partner": "China", "commodity": "Electronics", "trade_value_usd": 89000000000, "year": 2023, "flow": "Import" },
+    { "reporter": "Turkey", "partner": "Syria", "commodity": "Humanitarian", "trade_value_usd": 2000000000, "year": 2023, "flow": "Export" },
+    { "reporter": "India", "partner": "Pakistan", "commodity": "Agricultural", "trade_value_usd": 3000000000, "year": 2023, "flow": "Export" }
+  ],
+  "meta": { "synthetic": true, "source": "UN Comtrade Format" }
+}

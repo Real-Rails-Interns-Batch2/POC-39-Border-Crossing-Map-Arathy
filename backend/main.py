@@ -19,16 +19,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Load data from mock_data.json ─────────────────────────────────────────────
+# ── Load all data from JSON files ─────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MOCK_DATA_PATH = os.path.join(BASE_DIR, "data", "mock_data.json")
 
-def load_mock_data() -> dict:
-    with open(MOCK_DATA_PATH, "r", encoding="utf-8") as f:
+def load_json(filename: str) -> dict:
+    path = os.path.join(BASE_DIR, "data", filename)
+    with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 def build_df() -> pd.DataFrame:
-    data = load_mock_data()
+    data = load_json("mock_data.json")
     df = pd.DataFrame(data["crossings"])
     df["lng"] = df["lon"]
     avg_wait = df["wait_time"].mean()
@@ -111,43 +111,23 @@ def get_analytics():
     }
 
 
-# ── NEW: Census endpoint ──────────────────────────────────────────────────────
+# ── Census — reads from census_data.json ─────────────────────────────────────
 @app.get("/api/census")
 def get_census():
-    return {
-        "border_stats": [
-            { "crossing": "San Ysidro", "state": "California", "trucks_per_day": 4200, "cars_per_day": 71000, "year": 2023 },
-            { "crossing": "Detroit-Windsor", "state": "Michigan", "trucks_per_day": 8500, "cars_per_day": 12000, "year": 2023 },
-            { "crossing": "Peace Arch", "state": "Washington", "trucks_per_day": 1200, "cars_per_day": 24000, "year": 2023 },
-        ],
-        "county_data": [
-            { "name": "San Diego County", "state": "California", "population": "3,298,634", "income": "$78,980" },
-            { "name": "El Paso County", "state": "Texas", "population": "865,657", "income": "$44,431" },
-            { "name": "Wayne County", "state": "Michigan", "population": "1,759,335", "income": "$51,285" },
-            { "name": "Whatcom County", "state": "Washington", "population": "229,247", "income": "$68,750" },
-        ],
-        "meta": { "synthetic": True, "source": "US Census Bureau Format" }
-    }
+    data = load_json("census_data.json")
+    return data
 
 
-# ── NEW: Trade endpoint ───────────────────────────────────────────────────────
+# ── Trade — reads from trade_data.json ───────────────────────────────────────
 @app.get("/api/trade")
 def get_trade(flow: Optional[str] = None):
-    trade_data = [
-        { "reporter": "USA", "partner": "Canada", "commodity": "Automobiles", "trade_value_usd": 48000000000, "year": 2023, "flow": "Export" },
-        { "reporter": "USA", "partner": "Mexico", "commodity": "Consumer Goods", "trade_value_usd": 32000000000, "year": 2023, "flow": "Import" },
-        { "reporter": "France", "partner": "United Kingdom", "commodity": "Mixed Goods", "trade_value_usd": 28000000000, "year": 2023, "flow": "Export" },
-        { "reporter": "India", "partner": "Bangladesh", "commodity": "Agricultural", "trade_value_usd": 12000000000, "year": 2023, "flow": "Export" },
-        { "reporter": "Singapore", "partner": "Malaysia", "commodity": "Electronics", "trade_value_usd": 65000000000, "year": 2023, "flow": "Export" },
-        { "reporter": "Hong Kong", "partner": "China", "commodity": "Electronics", "trade_value_usd": 89000000000, "year": 2023, "flow": "Import" },
-        { "reporter": "Turkey", "partner": "Syria", "commodity": "Humanitarian", "trade_value_usd": 2000000000, "year": 2023, "flow": "Export" },
-        { "reporter": "India", "partner": "Pakistan", "commodity": "Agricultural", "trade_value_usd": 3000000000, "year": 2023, "flow": "Export" },
-    ]
+    data = load_json("trade_data.json")
+    trade_flows = data["trade_flows"]
     if flow and flow != "All":
-        trade_data = [t for t in trade_data if t["flow"] == flow]
+        trade_flows = [t for t in trade_flows if t["flow"] == flow]
     return {
-        "data": trade_data,
-        "meta": { "synthetic": True, "source": "UN Comtrade Format" }
+        "data": trade_flows,
+        "meta": data["meta"]
     }
 
 
@@ -157,5 +137,9 @@ def health():
         "status": "ok",
         "poc": 39,
         "name": "Border Crossing Activity Map",
-        "data_source": "mock_data.json"
+        "data_sources": {
+            "crossings": "mock_data.json",
+            "census": "census_data.json",
+            "trade": "trade_data.json"
+        }
     }
