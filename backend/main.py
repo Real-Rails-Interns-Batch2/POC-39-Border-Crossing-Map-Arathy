@@ -4,8 +4,7 @@ FastAPI Backend · Real Rails Intelligence Library
 Run: uvicorn main:app --reload --port 8000
 """
 
-import json, os, random
-from datetime import datetime
+import json, os
 from typing import Optional
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,40 +19,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Synthetic Data — labelled clearly per manifesto ──────────────────────────
-RAW_CROSSINGS = [
-    {"id": 1,  "name": "Wagah Border",           "country": "India - Pakistan",    "lat": 31.6040,  "lon": 74.5730,  "type": "Land",  "commodity": "Textiles",      "wait_time": 85,  "throughput": 1200,  "status": "Restricted", "risk_level": "High"},
-    {"id": 2,  "name": "Petrapole-Benapole",     "country": "India - Bangladesh",  "lat": 23.0200,  "lon": 88.9300,  "type": "Land",  "commodity": "Consumer Goods","wait_time": 45,  "throughput": 3500,  "status": "Active",     "risk_level": "Medium"},
-    {"id": 3,  "name": "Attari-Lahore",          "country": "India - Pakistan",    "lat": 31.7200,  "lon": 74.8600,  "type": "Rail",  "commodity": "Agriculture",   "wait_time": 120, "throughput": 800,   "status": "Restricted", "risk_level": "High"},
-    {"id": 4,  "name": "Moreh-Tamu",             "country": "India - Myanmar",     "lat": 24.2300,  "lon": 94.2800,  "type": "Land",  "commodity": "Timber",        "wait_time": 30,  "throughput": 950,   "status": "Active",     "risk_level": "Medium"},
-    {"id": 5,  "name": "Nathu La Pass",          "country": "India - China",       "lat": 27.3900,  "lon": 88.8300,  "type": "Land",  "commodity": "Electronics",   "wait_time": 60,  "throughput": 600,   "status": "Seasonal",   "risk_level": "Medium"},
-    {"id": 6,  "name": "Calais-Dover",           "country": "France - UK",         "lat": 50.9580,  "lon": 1.8584,   "type": "Sea",   "commodity": "Mixed Freight",  "wait_time": 25,  "throughput": 8500,  "status": "Active",     "risk_level": "Low"},
-    {"id": 7,  "name": "US-Mexico San Ysidro",   "country": "USA - Mexico",        "lat": 32.5430,  "lon": -117.028, "type": "Land",  "commodity": "Vehicles",      "wait_time": 95,  "throughput": 12000, "status": "Active",     "risk_level": "High"},
-    {"id": 8,  "name": "US-Canada Peace Arch",   "country": "USA - Canada",        "lat": 49.0025,  "lon": -122.757, "type": "Land",  "commodity": "Lumber",        "wait_time": 15,  "throughput": 6500,  "status": "Active",     "risk_level": "Low"},
-    {"id": 9,  "name": "Rafah Crossing",         "country": "Egypt - Gaza",        "lat": 31.2720,  "lon": 34.2430,  "type": "Land",  "commodity": "Humanitarian",  "wait_time": 180, "throughput": 200,   "status": "Restricted", "risk_level": "High"},
-    {"id": 10, "name": "Bab al-Hawa",            "country": "Turkey - Syria",      "lat": 36.4400,  "lon": 36.6300,  "type": "Land",  "commodity": "Aid Goods",     "wait_time": 150, "throughput": 350,   "status": "Restricted", "risk_level": "High"},
-    {"id": 11, "name": "Dostyk-Alashankou",      "country": "Kazakhstan - China",  "lat": 45.2800,  "lon": 82.3200,  "type": "Rail",  "commodity": "Coal",          "wait_time": 40,  "throughput": 4200,  "status": "Active",     "risk_level": "Low"},
-    {"id": 12, "name": "Khorgos Gateway",        "country": "Kazakhstan - China",  "lat": 44.2700,  "lon": 80.2000,  "type": "Rail",  "commodity": "Electronics",   "wait_time": 18,  "throughput": 7800,  "status": "Active",     "risk_level": "Low"},
-    {"id": 13, "name": "Luanda-Kinshasa Ferry",  "country": "Angola - DRC",        "lat": -4.3200,  "lon": 15.3200,  "type": "Sea",   "commodity": "Oil Products",  "wait_time": 200, "throughput": 450,   "status": "Active",     "risk_level": "High"},
-    {"id": 14, "name": "Beitbridge",             "country": "Zimbabwe - S.Africa", "lat": -22.2167, "lon": 30.0000,  "type": "Land",  "commodity": "Agriculture",   "wait_time": 110, "throughput": 2100,  "status": "Active",     "risk_level": "High"},
-    {"id": 15, "name": "Nimule-Elegu",           "country": "S. Sudan - Uganda",   "lat": 3.5900,   "lon": 32.0500,  "type": "Land",  "commodity": "Food Aid",      "wait_time": 90,  "throughput": 600,   "status": "Active",     "risk_level": "High"},
-    {"id": 16, "name": "Sungai Kolok",           "country": "Thailand - Malaysia", "lat": 6.0260,   "lon": 101.967,  "type": "Land",  "commodity": "Rubber",        "wait_time": 20,  "throughput": 3200,  "status": "Active",     "risk_level": "Low"},
-    {"id": 17, "name": "Muse-Ruili",             "country": "Myanmar - China",     "lat": 23.9900,  "lon": 97.8700,  "type": "Land",  "commodity": "Jade",          "wait_time": 55,  "throughput": 1800,  "status": "Active",     "risk_level": "Medium"},
-    {"id": 18, "name": "Chumphon Pass",          "country": "Thailand - Myanmar",  "lat": 10.4900,  "lon": 99.1800,  "type": "Land",  "commodity": "Seafood",       "wait_time": 35,  "throughput": 1100,  "status": "Seasonal",   "risk_level": "Medium"},
-    {"id": 19, "name": "Irun-Hendaye",           "country": "Spain - France",      "lat": 43.3490,  "lon": -1.7890,  "type": "Rail",  "commodity": "Automobiles",   "wait_time": 10,  "throughput": 9500,  "status": "Active",     "risk_level": "Low"},
-    {"id": 20, "name": "Brenner Pass",           "country": "Austria - Italy",     "lat": 47.0020,  "lon": 11.5080,  "type": "Rail",  "commodity": "Mixed Freight",  "wait_time": 8,   "throughput": 11000, "status": "Active",     "risk_level": "Low"},
-    {"id": 21, "name": "Tijuana-San Diego",      "country": "Mexico - USA",        "lat": 32.4850,  "lon": -117.038, "type": "Land",  "commodity": "Produce",       "wait_time": 105, "throughput": 9800,  "status": "Active",     "risk_level": "High"},
-    {"id": 22, "name": "Nuevo Laredo-Laredo",    "country": "Mexico - USA",        "lat": 27.4760,  "lon": -99.5150, "type": "Land",  "commodity": "Manufacturing", "wait_time": 75,  "throughput": 14000, "status": "Active",     "risk_level": "Medium"},
-    {"id": 23, "name": "Narva Bridge",           "country": "Estonia - Russia",    "lat": 59.3760,  "lon": 28.1960,  "type": "Land",  "commodity": "Energy",        "wait_time": 240, "throughput": 300,   "status": "Restricted", "risk_level": "High"},
-    {"id": 24, "name": "Yaoundé-Bangui Road",    "country": "Cameroon - CAR",      "lat": 5.3800,   "lon": 16.0400,  "type": "Land",  "commodity": "Timber",        "wait_time": 160, "throughput": 280,   "status": "Active",     "risk_level": "High"},
-    {"id": 25, "name": "Suez Canal Entry",       "country": "Egypt",               "lat": 30.0444,  "lon": 32.5498,  "type": "Sea",   "commodity": "Oil/LNG",       "wait_time": 12,  "throughput": 52000, "status": "Active",     "risk_level": "Low"},
-]
+# ── Load data from mock_data.json ─────────────────────────────────────────────
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MOCK_DATA_PATH = os.path.join(BASE_DIR, "data", "mock_data.json")
 
+def load_mock_data() -> dict:
+    with open(MOCK_DATA_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 def build_df() -> pd.DataFrame:
-    df = pd.DataFrame(RAW_CROSSINGS)
-    df["lng"] = df["lon"]  # alias — some frontend components use lng
-    # Intelligence layer — transform raw data into insights
+    data = load_mock_data()
+    df = pd.DataFrame(data["crossings"])
+    df["lng"] = df["lon"]
     avg_wait = df["wait_time"].mean()
     df["wait_vs_avg"] = ((df["wait_time"] - avg_wait) / avg_wait * 100).round(1)
     df["delay_label"] = df["wait_time"].apply(
@@ -77,7 +54,11 @@ def get_crossings(
     if commodity: df = df[df["commodity"].str.contains(commodity, case=False)]
     return {
         "data": json.loads(df.to_json(orient="records")),
-        "meta": {"total": len(df), "synthetic": True, "source": "Real Rails POC 39"}
+        "meta": {
+            "total": len(df),
+            "synthetic": True,
+            "source": "Real Rails POC 39 — mock_data.json"
+        }
     }
 
 
@@ -114,6 +95,67 @@ def compare_crossings(ids: str = Query(...)):
     return {"data": json.loads(result.to_json(orient="records"))}
 
 
+@app.get("/api/analytics")
+def get_analytics():
+    df = build_df()
+    return {
+        "avg_wait_by_risk": df.groupby("risk_level")["wait_time"].mean().round(1).to_dict(),
+        "avg_throughput_by_type": df.groupby("type")["throughput"].mean().round(0).to_dict(),
+        "total_throughput_by_commodity": df.groupby("commodity")["throughput"].sum().to_dict(),
+        "top_delays": json.loads(
+            df.nlargest(3, "wait_time")[["name", "wait_time", "country"]].to_json(orient="records")
+        ),
+        "top_throughput": json.loads(
+            df.nlargest(3, "throughput")[["name", "throughput", "country"]].to_json(orient="records")
+        ),
+    }
+
+
+# ── NEW: Census endpoint ──────────────────────────────────────────────────────
+@app.get("/api/census")
+def get_census():
+    return {
+        "border_stats": [
+            { "crossing": "San Ysidro", "state": "California", "trucks_per_day": 4200, "cars_per_day": 71000, "year": 2023 },
+            { "crossing": "Detroit-Windsor", "state": "Michigan", "trucks_per_day": 8500, "cars_per_day": 12000, "year": 2023 },
+            { "crossing": "Peace Arch", "state": "Washington", "trucks_per_day": 1200, "cars_per_day": 24000, "year": 2023 },
+        ],
+        "county_data": [
+            { "name": "San Diego County", "state": "California", "population": "3,298,634", "income": "$78,980" },
+            { "name": "El Paso County", "state": "Texas", "population": "865,657", "income": "$44,431" },
+            { "name": "Wayne County", "state": "Michigan", "population": "1,759,335", "income": "$51,285" },
+            { "name": "Whatcom County", "state": "Washington", "population": "229,247", "income": "$68,750" },
+        ],
+        "meta": { "synthetic": True, "source": "US Census Bureau Format" }
+    }
+
+
+# ── NEW: Trade endpoint ───────────────────────────────────────────────────────
+@app.get("/api/trade")
+def get_trade(flow: Optional[str] = None):
+    trade_data = [
+        { "reporter": "USA", "partner": "Canada", "commodity": "Automobiles", "trade_value_usd": 48000000000, "year": 2023, "flow": "Export" },
+        { "reporter": "USA", "partner": "Mexico", "commodity": "Consumer Goods", "trade_value_usd": 32000000000, "year": 2023, "flow": "Import" },
+        { "reporter": "France", "partner": "United Kingdom", "commodity": "Mixed Goods", "trade_value_usd": 28000000000, "year": 2023, "flow": "Export" },
+        { "reporter": "India", "partner": "Bangladesh", "commodity": "Agricultural", "trade_value_usd": 12000000000, "year": 2023, "flow": "Export" },
+        { "reporter": "Singapore", "partner": "Malaysia", "commodity": "Electronics", "trade_value_usd": 65000000000, "year": 2023, "flow": "Export" },
+        { "reporter": "Hong Kong", "partner": "China", "commodity": "Electronics", "trade_value_usd": 89000000000, "year": 2023, "flow": "Import" },
+        { "reporter": "Turkey", "partner": "Syria", "commodity": "Humanitarian", "trade_value_usd": 2000000000, "year": 2023, "flow": "Export" },
+        { "reporter": "India", "partner": "Pakistan", "commodity": "Agricultural", "trade_value_usd": 3000000000, "year": 2023, "flow": "Export" },
+    ]
+    if flow and flow != "All":
+        trade_data = [t for t in trade_data if t["flow"] == flow]
+    return {
+        "data": trade_data,
+        "meta": { "synthetic": True, "source": "UN Comtrade Format" }
+    }
+
+
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "poc": 39, "name": "Border Crossing Activity Map"}
+    return {
+        "status": "ok",
+        "poc": 39,
+        "name": "Border Crossing Activity Map",
+        "data_source": "mock_data.json"
+    }

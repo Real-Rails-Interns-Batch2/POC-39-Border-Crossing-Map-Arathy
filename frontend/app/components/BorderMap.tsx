@@ -15,7 +15,7 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
   const mapRef      = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const markers     = useRef<any[]>([]);
-  const lines       = useRef<any[]>([]);   // ← NEW: store lines here
+  const lines       = useRef<any[]>([]);
   const initialized = useRef(false);
 
   // Init map once
@@ -40,6 +40,27 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
         maxZoom: 19,
       }).addTo(map);
 
+      // Add pulse animation style once
+      const style = document.createElement("style");
+      style.innerHTML = `
+        @keyframes pulse-ring {
+          0%   { transform: scale(1);   opacity: 0.8; }
+          100% { transform: scale(2.8); opacity: 0; }
+        }
+        .pulse-ring {
+          position: absolute;
+          border-radius: 50%;
+          animation: pulse-ring 1.4s ease-out infinite;
+        }
+        .marker-selected {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      `;
+      document.head.appendChild(style);
+
       mapInstance.current = map;
     })();
   }, []);
@@ -58,15 +79,12 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
       markers.current.forEach((m) => m.remove());
       markers.current = [];
 
-      // ↓ NEW: Remove old lines before drawing new ones
+      // Remove old lines
       lines.current.forEach((l) => l.remove());
       lines.current = [];
 
-      // ↓ NEW: Draw connecting lines between all crossings that have lat/lon
-      // We connect each crossing to its nearest neighbours by type
+      // Draw connecting lines grouped by type
       const validCrossings = crossings.filter((c) => c.lat && c.lon);
-
-      // Group crossings by type and connect them in sequence
       const typeGroups: Record<string, Crossing[]> = {};
       validCrossings.forEach((c) => {
         if (!typeGroups[c.type]) typeGroups[c.type] = [];
@@ -74,15 +92,13 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
       });
 
       Object.entries(typeGroups).forEach(([type, group]) => {
-        // Connect each point to the next point of the same type
         for (let i = 0; i < group.length - 1; i++) {
           const from = group[i];
           const to   = group[i + 1];
-
           const color =
             type === "Rail" ? "#A78BFA" :
             type === "Sea"  ? "#60A5FA" :
-            "#4ADE80"; // Land default
+            "#4ADE80";
 
           const line = L.polyline(
             [[from.lat!, from.lon!], [to.lat!, to.lon!]],
@@ -90,7 +106,6 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
               color,
               weight: 1.5,
               opacity: 0.45,
-              // Rail = dashed line, Sea = solid, Land = dotted
               dashArray:
                 type === "Rail" ? "8, 5" :
                 type === "Land" ? "2, 6" :
@@ -102,24 +117,53 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
         }
       });
 
-      // Draw markers on top of lines
+      // Draw markers
       crossings.forEach((c) => {
         if (!c.lat || !c.lon) return;
 
         const isSelected = selected?.id === c.id;
         const color = TYPE_COLOR[c.type] ?? RISK_COLOR[c.risk_level];
-        const size  = isSelected ? 16 : 9;
 
+        // IMPROVED HIGHLIGHT — pulsing ring + bigger dot + bright border
         const icon = L.divIcon({
           className: "",
-          html: `<div style="
-            width:${size}px;height:${size}px;border-radius:50%;
-            background:${color};
-            border:${isSelected ? "2px solid #fff" : "1px solid " + color + "99"};
-            box-shadow:0 0 ${isSelected ? 14 : 6}px ${color}${isSelected ? "ee" : "77"};
-          "></div>`,
-          iconSize: [size, size],
-          iconAnchor: [size / 2, size / 2],
+          html: isSelected
+            ? `
+              <div class="marker-selected" style="width:32px;height:32px;">
+                <div class="pulse-ring" style="
+                  width:20px;height:20px;
+                  background:${color};
+                  top:6px;left:6px;
+                "></div>
+                <div style="
+                  position:absolute;
+                  width:24px;height:24px;
+                  border-radius:50%;
+                  border:2px solid ${color};
+                  top:4px;left:4px;
+                  opacity:0.6;
+                "></div>
+                <div style="
+                  position:absolute;
+                  width:14px;height:14px;
+                  border-radius:50%;
+                  background:${color};
+                  border:2.5px solid #fff;
+                  box-shadow:0 0 16px ${color}, 0 0 32px ${color}88;
+                  top:9px;left:9px;
+                "></div>
+              </div>
+            `
+            : `
+              <div style="
+                width:9px;height:9px;border-radius:50%;
+                background:${color};
+                border:1px solid ${color}99;
+                box-shadow:0 0 6px ${color}77;
+              "></div>
+            `,
+          iconSize: isSelected ? [32, 32] : [9, 9],
+          iconAnchor: isSelected ? [16, 16] : [4.5, 4.5],
         });
 
         const marker = L.marker([c.lat, c.lon], { icon });

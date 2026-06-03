@@ -64,23 +64,7 @@ export default function Sidebar({ crossing, allCrossings, onSelect, onDownload, 
             </div>
           ))}
         </div>
-
-        {/* Download Button */}
-        <button
-          onClick={onDownload}
-          className="w-full mt-3 rounded-xl py-2 text-xs font-medium transition"
-          style={{ border: "1px solid #38BDF8", color: "#38BDF8" }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#38BDF8";
-            e.currentTarget.style.color = "#000";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "#38BDF8";
-          }}
-        >
-          ⬇ Download Sample Data
-        </button>
+        {/* ↑ Download button REMOVED from here */}
       </div>
 
       {/* Selected Crossing Details */}
@@ -255,6 +239,34 @@ export default function Sidebar({ crossing, allCrossings, onSelect, onDownload, 
             </div>
           ))}
         </div>
+      </div>
+
+      {/* ↓ Download button MOVED to bottom */}
+      <div
+        className="rounded-2xl p-5"
+        style={{ border: "1px solid #1F2937", background: "#0B1117" }}
+      >
+        <h3 className="text-xs uppercase tracking-widest text-gray-500 mb-3">
+          Export Data
+        </h3>
+        <p className="text-xs text-gray-400 mb-3">
+          Download all border crossing data as a CSV file for offline analysis.
+        </p>
+        <button
+          onClick={onDownload}
+          className="w-full rounded-xl py-2 text-xs font-medium transition"
+          style={{ border: "1px solid #38BDF8", color: "#38BDF8" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#38BDF8";
+            e.currentTarget.style.color = "#000";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "#38BDF8";
+          }}
+        >
+          ⬇ Download Sample Data
+        </button>
       </div>
 
     </div>

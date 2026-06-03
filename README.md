@@ -165,7 +165,7 @@ Border crossings are critical choke points in global supply chains. Every hour o
 ## 👩‍💻 Built By
 
 **Arathy Rajeev**
-AI Engineer Intern · Boston Institute of Analytics
+Junior AI Engineer Intern · Boston Institute of Analytics
 Real Rails Intelligence Library · POC-39
 
 ---
