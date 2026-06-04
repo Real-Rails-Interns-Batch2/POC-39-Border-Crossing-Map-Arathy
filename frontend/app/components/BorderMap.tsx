@@ -122,7 +122,7 @@ export default function BorderMap({ crossings, selected, onSelect }: Props) {
         if (!c.lat || !c.lon) return;
 
         const isSelected = selected?.id === c.id;
-        const color = TYPE_COLOR[c.type] ?? RISK_COLOR[c.risk_level];
+        const color = TYPE_COLOR[c.type as keyof typeof TYPE_COLOR] ?? RISK_COLOR[c.risk_level as keyof typeof RISK_COLOR];
 
         // IMPROVED HIGHLIGHT — pulsing ring + bigger dot + bright border
         const icon = L.divIcon({

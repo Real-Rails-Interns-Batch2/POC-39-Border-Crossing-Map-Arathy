@@ -228,7 +228,7 @@ export default function Home() {
           {/* Tab content */}
           <div className="flex-1 overflow-hidden rounded-2xl"
             style={{ border: "1px solid #1F2937", background: "#0B1117" }}>
-            {activeTab === "map" && <BorderMap crossings={filtered} selectedCrossing={selected} onSelectCrossing={setSelected} />}
+            {activeTab === "map" && <BorderMap crossings={filtered} selected={selected} onSelect={setSelected} />}
             {activeTab === "delays"   && <DelayCards crossings={filtered} />}
             {activeTab === "compare"  && <Compare crossings={filtered} />}
             {activeTab === "chart"    && <Charts crossings={filtered} />}
