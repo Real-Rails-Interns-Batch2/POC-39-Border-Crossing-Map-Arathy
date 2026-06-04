@@ -35,9 +35,10 @@ export default function DeckOverlay({ crossings }: { crossings: Crossing[] }) {
 
       crossings.forEach((from, i) => {
         crossings.forEach((to, j) => {
-          if (i >= j) return;
-          const fp = project(from.lat, from.lon);
-          const tp = project(to.lat,   to.lon);
+  if (i >= j) return;
+  if (!from.lat || !from.lon || !to.lat || !to.lon) return;  
+  const fp = project(from.lat, from.lon);
+          const tp = project(to.lat,   to.lon   ?? to.lng   ?? 0);
           const dist = Math.hypot(fp.x - tp.x, fp.y - tp.y);
           if (dist > 300) return;
 
@@ -66,7 +67,7 @@ export default function DeckOverlay({ crossings }: { crossings: Crossing[] }) {
       });
 
       crossings.forEach((c) => {
-        const pos   = project(c.lat, c.lon);
+        const pos = project(c.lat, c.lon ?? c.lng ?? 0);
         const color = riskColors[c.risk_level];
         const pulse = 0.5 + 0.5 * Math.sin(frame * 0.05);
 

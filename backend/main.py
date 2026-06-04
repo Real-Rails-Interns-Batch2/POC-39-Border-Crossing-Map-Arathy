@@ -4,7 +4,8 @@ FastAPI Backend · Real Rails Intelligence Library
 Run: uvicorn main:app --reload --port 8000
 """
 
-import json, os
+import json
+import os
 from typing import Optional
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,9 +13,13 @@ import pandas as pd
 
 app = FastAPI(title="Border Crossing Intelligence API", version="1.0.0")
 
+# ── CORS — reads from environment for Render deployment ──────────────────────
+CORS_ORIGINS  = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
+ALLOWED_ORIGINS = [o.strip() for o in CORS_ORIGINS.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -111,14 +116,12 @@ def get_analytics():
     }
 
 
-# ── Census — reads from census_data.json ─────────────────────────────────────
 @app.get("/api/census")
 def get_census():
     data = load_json("census_data.json")
     return data
 
 
-# ── Trade — reads from trade_data.json ───────────────────────────────────────
 @app.get("/api/trade")
 def get_trade(flow: Optional[str] = None):
     data = load_json("trade_data.json")
