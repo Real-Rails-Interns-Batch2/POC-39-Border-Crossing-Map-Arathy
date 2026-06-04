@@ -132,7 +132,7 @@ export default function Home() {
                 {isMock ? "MOCK" : "LIVE"}
               </span>
               <span className="text-xs text-gray-600 whitespace-nowrap">
-                Real Rails · POC 39 · Data & Intelligence Rail
+                InfoCreon Internship · Real Rails · POC 39 · Data & Intelligence Rail
               </span>
             </div>
           </div>
