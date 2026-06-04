@@ -60,14 +60,14 @@ export default function ComparePanel({ crossings }: { crossings: Crossing[] }) {
           {fields.map((f, i) => {
             const av = f.format ? f.format(a[f.key]) : String(a[f.key]);
             const bv = f.format ? f.format(b[f.key]) : String(b[f.key]);
-            const aColor = f.key === "risk_level" ? RISK_COLOR[a.risk_level]
-                         : f.key === "delay_label" ? DELAY_COLOR[a.delay_label]
-                         : f.key === "wait_vs_avg" ? (a.wait_vs_avg > 0 ? "#EF4444" : "#4ADE80")
-                         : "#e2e8f0";
-            const bColor = f.key === "risk_level" ? RISK_COLOR[b.risk_level]
-                         : f.key === "delay_label" ? DELAY_COLOR[b.delay_label]
-                         : f.key === "wait_vs_avg" ? (b.wait_vs_avg > 0 ? "#EF4444" : "#4ADE80")
-                         : "#e2e8f0";
+            const aColor = f.key === "risk_level" ? RISK_COLOR[a.risk_level as keyof typeof RISK_COLOR]
+             : f.key === "delay_label" ? DELAY_COLOR[(a.delay_label ?? "Normal") as keyof typeof DELAY_COLOR]
+             : f.key === "wait_vs_avg" ? ((a.wait_vs_avg ?? 0) > 0 ? "#EF4444" : "#4ADE80")
+             : "#e2e8f0";
+            const bColor = f.key === "risk_level" ? RISK_COLOR[b.risk_level as keyof typeof RISK_COLOR]
+             : f.key === "delay_label" ? DELAY_COLOR[(b.delay_label ?? "Normal") as keyof typeof DELAY_COLOR]
+             : f.key === "wait_vs_avg" ? ((b.wait_vs_avg ?? 0) > 0 ? "#EF4444" : "#4ADE80")
+             : "#e2e8f0";
             return (
               <div key={f.key} className="grid grid-cols-3 text-xs"
                 style={{ background: i % 2 === 0 ? "transparent" : "#0B111720", borderBottom: "1px solid #0d1520" }}>
