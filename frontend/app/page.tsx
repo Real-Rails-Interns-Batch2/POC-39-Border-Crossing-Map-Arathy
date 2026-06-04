@@ -17,7 +17,7 @@ import SmartSearch from "./components/Search";
 
 const BorderMap = dynamic(() => import("./components/BorderMap"), { ssr: false });
 
-const API = "http://localhost:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 type Tab = "map"|"delays"|"compare"|"chart"|"table"|"analytics"|"trade"|"census"|"distance"|"deck";
 
