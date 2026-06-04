@@ -1,6 +1,3 @@
-export type RiskLevel = "Low" | "Medium" | "High";
-export type Status = "Active" | "Restricted" | "Seasonal";
-
 export type Crossing = {
   id: number;
   name: string;
@@ -12,19 +9,9 @@ export type Crossing = {
   commodity: string;
   lat: number;
   lng: number;
+  lon?: number;    // ← add this line!
   status: Status;
   risk_level: RiskLevel;
   type: string;
   delay_label?: string;
-};
-
-export type Stats = {
-  total: number;
-  active: number;
-  restricted: number;
-  avg_wait_time: number;
-  high_risk: number;
-  total_throughput: number;
-  commodities: Record<string, number>;
-  risk_breakdown: Record<string, number>;
 };
